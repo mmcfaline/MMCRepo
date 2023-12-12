@@ -61,7 +61,7 @@ def play_tetris():
 
         draw_board(board)
 
-        time.sleep(0.5)  # Adjust the speed of the game
+        time.sleep(0.10)  # Adjust the speed of the game
 
         # Move the shape down
         current_offset[0] += 1
