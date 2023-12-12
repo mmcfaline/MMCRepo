@@ -1,1 +1,71 @@
-print('Hello')
+import random
+import time
+import os
+
+# Define the Tetris board size
+board_width = 10
+board_height = 20
+
+# Define the Tetris shapes
+shapes = [
+    [[1, 1, 1, 1]],
+    [[1, 1, 1], [1]],
+    [[1, 1, 1], [0, 0, 1]],
+    [[1, 1, 1], [0, 1]],
+    [[1, 1], [1, 1]],
+    [[1, 1, 0], [0, 1, 1]],
+    [[0, 1, 1], [1, 1]]
+]
+
+# Function to rotate a shape
+def rotate(shape):
+    return [ [shape[j][i] for j in range(len(shape))] for i in range(len(shape[0]) - 1, -1, -1) ]
+
+# Function to check if a move is valid
+def is_valid_move(board, shape, offset):
+    for i, row in enumerate(shape):
+        for j, cell in enumerate(row):
+            if cell and (offset[1] + j < 0 or offset[1] + j >= board_width or offset[0] + i >= board_height or board[offset[0] + i][offset[1] + j]):
+                return False
+    return True
+
+# Function to draw the board
+def draw_board(board):
+    os.system('clear' if os.name == 'posix' else 'cls')  # Clear the console
+    for row in board:
+        print(' '.join(['#' if cell else ' ' for cell in row]))
+    print('-' * (board_width * 2 + 1))
+
+# Function to clear completed rows
+def clear_rows(board):
+    full_rows = [i for i, row in enumerate(board) if all(row)]
+    for row in full_rows:
+        del board[row]
+        board.insert(0, [0] * board_width)
+
+# Function to run the Tetris game
+def play_tetris():
+    board = [[0] * board_width for _ in range(board_height)]
+    current_shape = random.choice(shapes)
+    current_offset = [0, board_width // 2 - len(current_shape[0]) // 2]
+    
+    while True:
+        if not is_valid_move(board, current_shape, current_offset):
+            for i, row in enumerate(current_shape):
+                for j, cell in enumerate(row):
+                    if cell:
+                        board[current_offset[0] + i][current_offset[1] + j] = 1
+            clear_rows(board)
+            current_shape = random.choice(shapes)
+            current_offset = [0, board_width // 2 - len(current_shape[0]) // 2]
+
+        draw_board(board)
+
+        time.sleep(0.5)  # Adjust the speed of the game
+
+        # Move the shape down
+        current_offset[0] += 1
+
+# Run the Tetris game
+if __name__ == "__main__":
+    play_tetris()
